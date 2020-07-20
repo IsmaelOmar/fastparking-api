@@ -1,0 +1,232 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "FastParking-API Components Schema",
+  "type": "object",
+  "components": {
+    "schemas": {
+      "error": {
+        "type": "object",
+        "javaType": "com.fastparking.api.schema.Error",
+        "description": "Object that holds the code and message of different types of errors in the FastParking application",
+        "required": [
+          "code",
+          "message"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "code" : {
+            "type" : "string",
+            "maxLength" : 10,
+            "pattern" : "^[\\d]+$",
+            "description" : "error code populated in the event of error(s) occurring in the FastParking services"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "error message populated in the event of error(s) occurring in the FastParking services"
+          }
+        }
+      },
+      "parkingBay": {
+        "type": "object",
+        "javaType": "com.fastparking.api.schema.ParkingBay",
+        "description": "Class for the Parking Bays",
+        "additionalProperties": false,
+        "properties": {
+          "parkingBayId": {
+            "type": "string"
+          },
+          "parkingFloor": {
+            "type": "integer"
+          },
+          "parkingBayNumber": {
+            "type": "string"
+          },
+          "parkingSite": {
+            "type": "string"
+          },
+          "availability": {
+            "type": "boolean"
+          }
+
+        }
+      },
+      "userLogin": {
+        "type": "object",
+        "javaType": "com.fastparking.api.schema.UserLogin",
+        "description": "Class for the User",
+        "required": [
+          "username",
+          "password"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "password": {
+            "type":"string",
+            "pattern":"[a-zA-Z0-9.]",
+            "description": "Password of user"
+          },
+          "username": {
+            "type": "string",
+            "pattern": "[a-zA-Z0-9.]",
+            "description": "Username of user"
+          }
+        }
+      },
+      "users": {
+        "type": "object",
+        "javaType": "com.fastparking.api.schema.User",
+        "description": "Class for Users",
+        "required": [
+          "email",
+          "firstName",
+          "lastName",
+          "licensePlate"
+        ],
+        "properties": {
+          "email": {
+            "type":"string",
+            "pattern": "[a-zA-Z0-9._%+-]@[a-zA-Z0-9].[a-zA-Z]",
+            "description":"the email of the user signing up"
+          },
+          "firstName": {
+            "type":"string",
+            "pattern":"[a-zA-Z]",
+            "description": "First name of user"
+          },
+          "lastName": {
+            "type":"string",
+            "pattern":"[a-zA-Z]",
+            "description": "Last name of user"
+          },
+          "dateOfSignUp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "bookings": {
+            "type": "array",
+            "description": "bookings related to the user",
+            "items": {
+              "$ref": "#/components/schemas/booking"
+            }
+          },
+          "licensePlate" : {
+            "type": "string",
+            "pattern": "[A-Z0-9]"
+          }
+        }
+      },
+      "booking": {
+        "type": "object",
+        "javaType": "com.fastparking.api.schema.Booking",
+        "description": "Class for Bookings",
+        "properties": {
+          "bookingId": {
+              "type": "string"
+            },
+          "bookingFromTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "bookingToTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "parkingBay": {
+            "$ref": "#/components/schemas/parkingBay"
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "userRegistrationRequest": {
+      "type": "object",
+      "javaType": "com.fastparking.api.schema.UserRegistrationRequest",
+      "description": "Class for user registration request",
+      "required": ["userLogin", "userDetails"],
+      "properties": {
+        "userLogin": {
+          "$ref": "#/components/schemas/userLogin"
+        },
+        "userDetails": {
+          "$ref": "#/components/schemas/users"
+        }
+      }
+    },
+    "userRegistrationResponse": {
+      "type": "object",
+      "javaType" : "com.fastparking.api.schema.UserRegistrationResponse",
+      "description": "Class for the user registration response",
+      "required": [
+        "result"
+      ],
+      "properties": {
+        "result": {
+          "type": "string",
+          "pattern": "[a-zA-Z]",
+          "description": "the result of the UserRegistration Service being run"
+        }
+      }
+    },
+    "userDetailsRequest": {
+      "type": "object",
+      "javaType": "com.fastparking.api.schema.UserDetailsRequest",
+      "description": "Class for user registration request",
+      "required": ["userId"],
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "the user id of the user"
+        }
+      }
+    },
+    "userSignInRequest": {
+      "type": "object",
+      "javaType": "com.fastparking.api.schema.UserSignInRequest",
+      "description": "Class for user sign in request",
+      "required": ["username", "password"],
+      "properties": {
+        "password": {
+          "type":"string",
+          "pattern":"[a-zA-Z0-9.]",
+          "description": "Password of user"
+        },
+        "username": {
+          "type": "string",
+          "pattern": "[a-zA-Z0-9.]",
+          "description": "Username of user"
+        }
+      }
+    },
+    "userSignInResponse" : {
+      "type": "object",
+      "javaType": "com.fastparking.api.schema.UserSignInResponse",
+      "description": "Class for the user sign in response",
+      "required": ["result"],
+      "properties": {
+        "result": {
+          "type": "string",
+          "pattern": "[a-zA-Z]",
+          "description": "the result of the UserSignIn Service being run"
+        }
+      }
+    },
+    "error" : {
+      "type": "object",
+      "javaType": "com.fastparking.api.schema.Error",
+      "description": "Class for the Error response",
+      "required": ["code", "message"],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

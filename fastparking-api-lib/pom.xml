@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>fastparking-api</artifactId>
+        <groupId>com.fastparking</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>fastparking-api-lib</artifactId>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>fastparking-api-lib-builder</module>
+        <module>fastparking-api-lib-services</module>
+        <module>fastparking-api-lib-commons</module>
+        <module>fastparking-api-lib-schema</module>
+    </modules>
+
+
+</project>
