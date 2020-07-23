@@ -34,21 +34,21 @@ public class SignInProcessorTest {
         CamelContext ctx = new DefaultCamelContext();
         exchange = new DefaultExchange(ctx);
         signInProcessor = new SignInProcessor();
-        signIn = new SignIn();
+        signIn = mock(SignIn.class);
         mockedUserLoginDAO = Mockito.mock(UserLoginDAOImpl.class);
     }
 
     @Test
-    public void givenNoRequestBodyWhenProcessorIsCalledExpectException() {
+    public void givenNoRequestBodyWhenProcessorIsCalledExpectException() throws FastParkingApplicationException {
         signInProcessor.setSignIn(signIn);
+        doThrow(FastParkingApplicationException.class).when(signIn).checkUserCredentialsForSignIn(exchange);
         assertThrows(FastParkingApplicationException.class, () -> {
            signInProcessor.process(exchange);
         });
     }
 
     @Test
-    public void givenValidRequestBodyWhenProcessorIsCalledExpectNoException() throws IOException {
-        signInProcessor.setSignIn(signIn);
+    public void givenValidRequestBodyWhenProcessorIsCalledExpectNoException() throws Exception {
         List<UserLoginEntity> userLoginEntityList = new ArrayList<>();
         UserLoginEntity userLoginEntity = new UserLoginEntity();
         userLoginEntity.setUsername("MyNameIsJeff");
@@ -59,12 +59,13 @@ public class SignInProcessorTest {
 
         buildTestUserLoginEntityObject(exchange, userLoginEntity);
 
-        when(mockedUserLoginDAO.findByUsernameAndPassword("MyNameIsJeff", "MyNameIsJeff")).thenReturn(userLoginEntityList);
+        signInProcessor.setSignIn(signIn);
 
-        userLoginEntity.setSignedIn(true);
-        doNothing().when(mockedUserLoginDAO).saveUserLoginDetails(userLoginEntity);
+        doNothing().when(signIn).checkUserCredentialsForSignIn(exchange);
+
+        signInProcessor.process(exchange);
+
         UserLoginEntity insUserLoginEntity = exchange.getIn().getBody(UserLoginEntity.class);
-
         assertEquals(insUserLoginEntity, userLoginEntity);
 
     }

@@ -2,7 +2,7 @@ package com.fastparking.api.lib.commons.encryption;
 
 import com.fastparking.api.lib.commons.exceptions.FastParkingApplicationException;
 import org.slf4j.Logger;
-import org.springframework.util.ResourceUtils;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -12,15 +12,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import com.fastparking.api.lib.commons.util.FastParkingUtil;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Base64;
 
 import static com.fastparking.api.lib.commons.constants.DataConstants.TECHNICAL_ERROR;
+import static com.fastparking.api.lib.commons.constants.DataConstants.TECHNICAL_ERROR_CD;
 import static org.slf4j.LoggerFactory.getLogger;
 
+@Component
 public class EncryptionUtil {
 
     private static SecretKeySpec secretKeySpec;
@@ -75,6 +76,7 @@ public class EncryptionUtil {
     public String encrypt(String strToEncrypt) throws FastParkingApplicationException {
         try
         {
+            checkForEmptyString(strToEncrypt);
             EncryptionUtil encryptionUtil = new EncryptionUtil();
             String key = encryptionUtil.readEncryptionKeyFromFile();
             setKey(key);
@@ -85,13 +87,14 @@ public class EncryptionUtil {
         catch (Exception e)
         {
            LOGGER.error("Error while encrypting: " + e.toString());
-           throw new FastParkingApplicationException(e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), TECHNICAL_ERROR);
+           throw new FastParkingApplicationException(e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), TECHNICAL_ERROR_CD);
         }
     }
 
     public String decrypt(String strToDecrypt) throws FastParkingApplicationException {
         try
         {
+            checkForEmptyString(strToDecrypt);
             EncryptionUtil encryptionUtil = new EncryptionUtil();
             String key = encryptionUtil.readEncryptionKeyFromFile();
             setKey(key);
@@ -105,5 +108,11 @@ public class EncryptionUtil {
             throw new FastParkingApplicationException(e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), TECHNICAL_ERROR);
         }
 
+    }
+
+    private void checkForEmptyString(String strToEncryptOrDecrypt) throws Exception {
+        if (strToEncryptOrDecrypt.isEmpty()) {
+            throw new Exception("String cannot be empty");
+        }
     }
 }

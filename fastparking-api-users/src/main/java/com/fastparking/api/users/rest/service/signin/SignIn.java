@@ -13,7 +13,11 @@ import org.springframework.stereotype.Component;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
-import static com.fastparking.api.lib.commons.constants.DataConstants.*;
+import static com.fastparking.api.lib.commons.constants.DataConstants.INVALID_REQUEST_ERROR_CD;
+import static com.fastparking.api.lib.commons.constants.DataConstants.TECHNICAL_ERROR_CD;
+import static com.fastparking.api.lib.commons.constants.DataConstants.ORIGINAL_REQUEST;
+import static com.fastparking.api.lib.commons.constants.DataConstants.SIGN_IN_RESULT;
+
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Component
@@ -33,10 +37,14 @@ public class SignIn {
             EncryptionUtil encryptionUtil = new EncryptionUtil();
             String encryptedPassword = null;
 
-            try {
+            try
+            {
                 encryptedPassword = encryptionUtil.encrypt(userSignInRequest.getPassword());
-            } catch (FastParkingApplicationException e) {
-                LOGGER.error("Unable to encrypt password from user sign in request : " + e.getMessage());
+            }
+            catch (FastParkingApplicationException e)
+            {
+                LOGGER.error("Unable to encrypt password from user sign in request : ", e);
+                throw new FastParkingApplicationException(e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), TECHNICAL_ERROR_CD);
             }
 
             LOGGER.info("Starting call to UserLoginDAO.findByUsernameAndPassword");
@@ -52,7 +60,8 @@ public class SignIn {
                 LOGGER.info("Start of Update to user login entity via UserLoginDAO - setting 'signed_in' field to true");
                 exchange.getIn().setBody(userLoginEntity);
                 exchange.getIn().getHeaders().put(SIGN_IN_RESULT, "Signed In Successfully");
-            } else {
+            }
+            else {
                 LOGGER.warn("No users found with specified username and password");
                 exchange.getIn().getHeaders().put(SIGN_IN_RESULT, "Unsuccessful Sign In, Please check if the Username and Password are correct");
             }

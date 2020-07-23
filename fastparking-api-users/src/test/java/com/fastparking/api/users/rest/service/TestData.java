@@ -14,13 +14,23 @@ import static com.fastparking.api.lib.commons.constants.DataConstants.ORIGINAL_R
 public class TestData {
 
     public static void buildTestStringSignInRequest(Exchange exchange, boolean valid) {
-        ObjectMapper mapper = new ObjectMapper();
         exchange.getIn().setBody(buildSignInRequest(valid));
     }
 
-    public static void buildTestUserLoginEntityObject(Exchange exchange, UserLoginEntity userLoginEntity) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
+    public static void buildTestUserLoginEntityObject(Exchange exchange, UserLoginEntity userLoginEntity) {
         exchange.getIn().setBody(userLoginEntity);
+    }
+
+    public static void buildTestUserSignInRequestObject(Exchange exchange, boolean valid) {
+        UserSignInRequest userSignInRequest = new UserSignInRequest();
+        if (valid) {
+            userSignInRequest.setUsername("MyNameIsJeff");
+            userSignInRequest.setPassword("MyNameIsJeff");
+        } else {
+            userSignInRequest.setPassword("");
+            userSignInRequest.setUsername("MyNameIsJeff");
+        }
+        exchange.getIn().setBody(userSignInRequest);
     }
 
 
